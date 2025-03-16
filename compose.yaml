@@ -1,0 +1,17 @@
+services:
+  mysql:
+    container_name: mysql
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=shopixdb'
+      - 'MYSQL_PASSWORD=shopix_password'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=shopix_user'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+
+volumes:
+  mysql_data:
+    driver: local
