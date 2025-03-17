@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.shopix</groupId>
-	<artifactId>api</artifactId>
+	<artifactId>shopix</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>api</name>
 	<description>Demo project for Spring Boot</description>
@@ -32,11 +32,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
@@ -70,8 +70,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
@@ -90,6 +88,15 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<configuration>
+					<url>jdbc:mysql://localhost:3306/shopixdb</url>
+					<user>shopix_user</user>
+					<password>shopix_password</password>
 				</configuration>
 			</plugin>
 		</plugins>
