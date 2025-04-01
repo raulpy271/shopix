@@ -1,29 +1,32 @@
 package com.shopix.api.entities;
 
-import java.sql.Date;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="products")
-@Setter
+@Table(name="cart_items")
 @Getter
-public class Product {
+@Setter
+public class CartItem {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	private String name;
-	private double price;
-	private int stock;
-	private String category;
-	private String brand;
-	private float rating;
-	private Date created_at;
-	private Date updated_at;
+	private int quantity;
+	private float subtotal;
+
+	@ManyToOne
+	@JoinColumn(name="cart_id")
+	private Cart cart;
+
+	@ManyToOne
+	@JoinColumn(name="product_variations_id")
+	private ProductVariation var;
+
 }

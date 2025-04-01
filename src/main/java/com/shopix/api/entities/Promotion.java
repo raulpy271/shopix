@@ -6,24 +6,26 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="products")
-@Setter
+@Table(name="promotions")
 @Getter
-public class Product {
+@Setter
+public class Promotion {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	private String name;
-	private double price;
-	private int stock;
-	private String category;
-	private String brand;
-	private float rating;
-	private Date created_at;
-	private Date updated_at;
+	private float discountPercentage;
+	private Date startDate;
+	private Date endDate;
+	private boolean isActive;
+	@ManyToOne
+	@JoinColumn(name = "product_variation_id")
+	private ProductVariation var;
 }
