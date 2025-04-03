@@ -14,9 +14,9 @@ public class ProductService {
 	@Autowired
 	private ProductRepository productRepository;
 	
-	public void store(Product product)
+	public Product store(Product product)
 	{
-		productRepository.save(product);
+		return productRepository.save(product);
 	}
 	
 	public Product findById(Long id)
