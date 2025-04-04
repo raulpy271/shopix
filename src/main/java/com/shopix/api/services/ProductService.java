@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.shopix.api.dtos.ProductCreateDTO;
 import com.shopix.api.dtos.ProductResponseDTO;
+import com.shopix.api.dtos.ProductUpdateDTO;
 import com.shopix.api.entities.Product;
 import com.shopix.api.mappers.ProductMapper;
 import com.shopix.api.repository.ProductRepository;
@@ -36,5 +37,27 @@ public class ProductService {
 		List<Product> ps = productRepository.findAll();
 		return ps.stream().map(ProductMapper::toDTO).toList();
 
+	}
+	
+	public ProductResponseDTO update(ProductUpdateDTO dto)
+	{
+		Product product = productRepository
+			.findById(dto.id())
+			.orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+		product.setName(dto.name());
+		product.setPrice(dto.price());
+		product.setStock(dto.stock());
+		product.setRating(dto.rating());
+		product.setBrand(dto.brand());
+		product.setCategory(dto.category());
+		return ProductMapper.toDTO(productRepository.save(product));
+	}
+	
+	public void destroy(Long id)
+	{
+		Product product = productRepository
+			.findById(id)
+			.orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+		productRepository.delete(product);
 	}
 }
