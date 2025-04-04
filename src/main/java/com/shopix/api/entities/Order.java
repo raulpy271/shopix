@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.shopix.api.enuns.OrderStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,7 +34,7 @@ public class Order {
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	private User user;
-	@OneToMany
+	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="order_id")
 	private List<OrderItem> items;
 

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shopix.api.dtos.ProductCreateDTO;
 import com.shopix.api.dtos.ProductDTO;
+import com.shopix.api.dtos.ProductResponseDTO;
 import com.shopix.api.entities.Product;
 import com.shopix.api.mappers.ProductMapper;
 import com.shopix.api.services.ProductService;
@@ -26,22 +28,25 @@ public class ProductController {
 	ProductService productService;
 	
 	@PostMapping
-	public ResponseEntity<ProductDTO> create(@RequestBody ProductDTO p)
+	public ResponseEntity<ProductResponseDTO> create(@RequestBody ProductCreateDTO dto)
 	{
-		Product created = productService.store(ProductMapper.toEntity(p));
-		return new ResponseEntity<>(ProductMapper.toDTO(created), HttpStatus.CREATED);
+		ProductResponseDTO created = productService.store(dto);
+		return new ResponseEntity<>(created, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/{id}")
-	public ProductDTO get(@PathVariable Long id)
+	public ResponseEntity<ProductResponseDTO> show(@PathVariable Long id)
 	{
-		Product product = productService.findById(id);
-		return ProductMapper.toDTO(product);
+		try {
+			return new ResponseEntity<>(productService.show(id), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@GetMapping
-	public List<Product> list() 
+	public ResponseEntity<List<ProductResponseDTO>> list() 
 	{
-		return productService.list();
+		return new ResponseEntity<>(productService.list(), HttpStatus.OK);
 	}
 }
