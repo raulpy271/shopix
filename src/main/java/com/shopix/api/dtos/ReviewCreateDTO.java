@@ -1,5 +1,5 @@
 package com.shopix.api.dtos;
 
-public record ReviewCreateDTO() {
-
-}
+public record ReviewCreateDTO(
+	int rating,
+	String comment) { }
