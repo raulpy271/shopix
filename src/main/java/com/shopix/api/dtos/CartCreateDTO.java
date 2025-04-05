@@ -1,5 +1,6 @@
 package com.shopix.api.dtos;
 
-public record CartCreateDTO() {
+import com.shopix.api.entities.User;
 
-}
+public record CartCreateDTO(
+	User user) { }

@@ -1,6 +1,6 @@
 package com.shopix.api.dtos;
 
-import java.sql.Date;
+import java.time.Instant;
 
 import com.shopix.api.enuns.Role;
 
@@ -11,5 +11,5 @@ public record UserResponseDTO(
 	String email,
 	Role role,
 	boolean admin,
-	Date created_at,
-	Date updated_at) { }
+	Instant created_at,
+	Instant updated_at) { }

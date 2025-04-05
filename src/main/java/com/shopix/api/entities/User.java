@@ -1,6 +1,10 @@
 package com.shopix.api.entities;
 
 import java.sql.Date;
+import java.time.Instant;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 
 import com.shopix.api.enuns.Role;
 
@@ -30,6 +34,8 @@ public class User {
 	private Role role;
 	private String password_hash;
 	private String password_salt;
-	private Date created_at;
-	private Date updated_at;
+	@CreatedDate
+	private Instant created_at;
+	@LastModifiedBy
+	private Instant updated_at;
 }
