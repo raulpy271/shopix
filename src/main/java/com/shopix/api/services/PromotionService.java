@@ -1,5 +1,60 @@
 package com.shopix.api.services;
 
-public class PromotionService {
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.shopix.api.dtos.PromotionCreateDTO;
+import com.shopix.api.dtos.PromotionResponseDTO;
+import com.shopix.api.dtos.PromotionUpdateDTO;
+import com.shopix.api.entities.Promotion;
+import com.shopix.api.mappers.PromotionMapper;
+import com.shopix.api.repository.PromotionRepository;
+
+@Service
+public class PromotionService {
+	@Autowired
+	PromotionRepository promotionRepository;
+	
+	public PromotionResponseDTO store(PromotionCreateDTO dto)
+	{
+		Promotion promotion = PromotionMapper.toEntity(dto);
+		return PromotionMapper.toDTO(promotionRepository.save(promotion));
+	}
+	
+	public List<PromotionResponseDTO> list()
+	{
+		List<Promotion> promotions = promotionRepository.findAll();
+		return promotions.stream().map(PromotionMapper::toDTO).toList();
+	}
+	
+	public PromotionResponseDTO show(Long id)
+	{
+		Promotion promotion = promotionRepository
+			.findById(id)
+			.orElseThrow(() -> new RuntimeException("Promoção não encontrada"));
+		return PromotionMapper.toDTO(promotion);
+	}
+	
+	public PromotionResponseDTO update(PromotionUpdateDTO dto)
+	{
+		Promotion promotion = promotionRepository
+			.findById(dto.id())
+			.orElseThrow(() -> new RuntimeException("Promoção não encontrada"));
+		promotion.setName(dto.name());
+		promotion.setDiscountPercentage(dto.discountPercentage());
+		promotion.setStartDate(dto.startDate());
+		promotion.setEndDate(dto.endDate());
+		promotion.setActive(dto.isActive());
+		return PromotionMapper.toDTO(promotion);
+	}
+	
+	public void destroy(Long id)
+	{
+		Promotion promotion = promotionRepository
+			.findById(id)
+			.orElseThrow(() -> new RuntimeException("Promoção não encontrada"));
+		promotionRepository.delete(promotion);
+	}
 }
