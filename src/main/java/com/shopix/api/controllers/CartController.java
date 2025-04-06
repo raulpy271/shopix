@@ -59,7 +59,7 @@ public class CartController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> destroy(Long id)
+	public ResponseEntity<String> destroy(@PathVariable Long id)
 	{
 		try {
 			cartService.destroy(id);
