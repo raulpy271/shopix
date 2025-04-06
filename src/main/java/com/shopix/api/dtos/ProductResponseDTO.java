@@ -1,6 +1,6 @@
 package com.shopix.api.dtos;
 
-import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 
 public record ProductResponseDTO(
@@ -11,6 +11,6 @@ public record ProductResponseDTO(
 	String category,
 	String brand,
 	float rating,
-	Date created_at,
-	Date updated_at,
+	Instant created_at,
+	Instant updated_at,
 	List<ProductVariationResponseDTO> vars) { }

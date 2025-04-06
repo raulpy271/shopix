@@ -1,5 +1,6 @@
 package com.shopix.api.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +11,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name="cart_items")
 @Table(name="cart_items")
 @Getter
 @Setter
@@ -20,6 +21,7 @@ public class CartItem {
 	private Long id;
 	private int quantity;
 	private float subtotal;
+
 
 	@ManyToOne
 	@JoinColumn(name="cart_id")
