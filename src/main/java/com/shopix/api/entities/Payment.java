@@ -1,7 +1,6 @@
 package com.shopix.api.entities;
 
-
-import java.sql.Date;
+import java.time.Instant;
 
 import com.shopix.api.enuns.PaymentMethod;
 import com.shopix.api.enuns.PaymentStatus;
@@ -34,7 +33,7 @@ public class Payment {
 	private PaymentStatus status;
 	@Enumerated(EnumType.STRING)
 	private PaymentMethod method;
-	private Date created_at;
-	private Date updated_at;
+	private Instant created_at;
+	private Instant updated_at;
 
 }
