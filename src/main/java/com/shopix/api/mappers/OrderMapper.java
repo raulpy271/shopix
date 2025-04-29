@@ -7,7 +7,7 @@ import com.shopix.api.dtos.OrderItemResponseDTO;
 import com.shopix.api.dtos.OrderResponseDTO;
 import com.shopix.api.entities.Order;
 import com.shopix.api.entities.OrderItem;
-import com.shopix.api.repository.ProductVariationRepository;
+import com.shopix.api.repository.ProductRepository;
 
 public class OrderMapper {
 	public static OrderResponseDTO toDTO(Order order)
@@ -16,9 +16,13 @@ public class OrderMapper {
 		return new OrderResponseDTO(order.getId(), order.getTotalPrice(), order.getStatus(), order.getPaymentMethod(), order.getTrackingCode(), order.getCreated_at(), order.getUpdated_at(), items);
 	}
 	
-	public static Order toEntity(OrderCreateDTO dto)
+	public static Order toEntity(OrderCreateDTO dto, ProductRepository productRepository)
 	{
-		List<OrderItem> items = dto.items().stream().map(OrderItemMapper::toEntity).toList();
+		List<OrderItem> items = dto
+				.items()
+				.stream()
+				.map(item -> OrderItemMapper.toEntity(item, productRepository))
+				.toList();
 		Order order = new Order();
 		order.setTotalPrice(dto.totalPrice());
 		order.setStatus(dto.status());

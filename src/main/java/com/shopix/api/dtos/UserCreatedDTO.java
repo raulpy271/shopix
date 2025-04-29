@@ -6,4 +6,5 @@ public record UserCreatedDTO(
 	String username,
 	String fullname,
 	String email,
-	Role role) { }
+	Role role,
+	String password) { }

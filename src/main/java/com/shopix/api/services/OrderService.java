@@ -1,6 +1,5 @@
 package com.shopix.api.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +9,20 @@ import com.shopix.api.dtos.OrderCreateDTO;
 import com.shopix.api.dtos.OrderResponseDTO;
 import com.shopix.api.dtos.OrderUpdateDTO;
 import com.shopix.api.entities.Order;
-import com.shopix.api.entities.OrderItem;
 import com.shopix.api.mappers.OrderMapper;
 import com.shopix.api.repository.OrderRepository;
+import com.shopix.api.repository.ProductRepository;
 
 @Service
 public class OrderService {
 	@Autowired
 	OrderRepository orderRepository;
+	@Autowired
+	ProductRepository productRepository;
 	
 	public OrderResponseDTO store(OrderCreateDTO create)
 	{
-		Order order = OrderMapper.toEntity(create);
+		Order order = OrderMapper.toEntity(create, productRepository);
 		return OrderMapper.toDTO(orderRepository.save(order));
 	}
 

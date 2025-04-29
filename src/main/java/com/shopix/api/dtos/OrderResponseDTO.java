@@ -1,6 +1,6 @@
 package com.shopix.api.dtos;
 
-import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 
 import com.shopix.api.enuns.OrderStatus;
@@ -11,6 +11,6 @@ public record OrderResponseDTO(
 	OrderStatus status,
 	String paymentMethod,
 	String trackingCode,
-	Date created_at,
-	Date updated_at,
+	Instant created_at,
+	Instant updated_at,
 	List<OrderItemResponseDTO> items) { }
