@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shopix.api.dtos.CartCreateDTO;
+import com.shopix.api.dtos.CartItemCreateDTO;
 import com.shopix.api.dtos.CartResponseDTO;
 import com.shopix.api.dtos.CartUpdateDTO;
 import com.shopix.api.services.CartService;
@@ -64,6 +65,26 @@ public class CartController {
 		try {
 			cartService.destroy(id);
 			return new ResponseEntity<>("Carrinho deletado com sucesso!", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@PostMapping("/addItem/{id}")
+	public ResponseEntity<CartResponseDTO> addItem(@PathVariable Long id, @RequestBody CartItemCreateDTO dto)
+	{
+		try {
+			return new ResponseEntity<>(cartService.addItem(id, dto), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@PostMapping("/removeItem/{cart_id}/{item_id}")
+	public ResponseEntity<CartResponseDTO> addItem(@PathVariable Long cart_id, @PathVariable Long item_id)
+	{
+		try {
+			return new ResponseEntity<>(cartService.removeItem(cart_id, item_id), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}

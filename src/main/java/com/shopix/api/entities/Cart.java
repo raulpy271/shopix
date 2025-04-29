@@ -2,6 +2,7 @@ package com.shopix.api.entities;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,7 +26,7 @@ public class Cart {
 	@JoinColumn(name="user_id")
 	private User user;
 	
-	@OneToMany
+	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="cart_id")
-	private List<CartItem> carts;
+	private List<CartItem> items;
 }

@@ -15,4 +15,7 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
 	@NativeQuery("SELECT ci.* FROM cart_items ci WHERE ci.cart_id = :id")
 	List<CartItem> listCartItems(@Param("id") Long id);
+	
+	@NativeQuery("SELECT ci.* FROM cart_items ci WHERE ci.id = :id")
+	CartItem getCartItemById(@Param("id") Long id);
 }

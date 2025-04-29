@@ -1,7 +1,8 @@
 package com.shopix.api.dtos;
 
-import com.shopix.api.entities.User;
+import java.util.List;
 
 public record CartResponseDTO(
 	Long id,
-	User user) { }
+	Long user_id,
+	List<CartItemResponseDTO> items) { }
