@@ -1,10 +1,13 @@
 package com.shopix.api.entities;
 
-import java.sql.Date;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.shopix.api.enuns.Role;
 
@@ -22,7 +25,7 @@ import lombok.Setter;
 @Table(name="users")
 @Setter
 @Getter
-public class User {
+public class User implements UserDetails {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
@@ -38,4 +41,13 @@ public class User {
 	private Instant created_at;
 	@LastModifiedBy
 	private Instant updated_at;
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of();
+	}
+	@Override
+	public String getPassword() {
+		return this.password_hash;
+	}
 }
