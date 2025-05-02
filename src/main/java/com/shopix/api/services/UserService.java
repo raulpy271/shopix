@@ -1,8 +1,10 @@
 package com.shopix.api.services;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.shopix.api.dtos.UserCreatedDTO;
@@ -16,10 +18,22 @@ import com.shopix.api.repository.UserRepository;
 public class UserService {
 	@Autowired
 	private UserRepository userRepository;
+	private SecureRandom random;
+	
+	public UserService()
+	{
+		this.random = new SecureRandom();
+	}
 
 	public UserResponseDTO store(UserCreatedDTO created)
 	{
 		User user = UserMapper.toEntity(created);
+		String salt = "";
+		for (int i = 0; i < 64; i++) {
+			salt += String.valueOf(random.nextInt(8));
+		}
+		user.setPassword_hash(new BCryptPasswordEncoder().encode(created.password() + salt));
+		user.setPassword_salt(salt);
 		return UserMapper.toDTO(userRepository.save(user));
 	}
 	

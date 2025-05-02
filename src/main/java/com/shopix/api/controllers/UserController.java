@@ -1,10 +1,15 @@
 package com.shopix.api.controllers;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,9 +19,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shopix.api.auth.JWTService;
+import com.shopix.api.dtos.AuthDTO;
 import com.shopix.api.dtos.UserCreatedDTO;
 import com.shopix.api.dtos.UserResponseDTO;
 import com.shopix.api.dtos.UserUpdateDTO;
+import com.shopix.api.entities.User;
+import com.shopix.api.repository.UserRepository;
 import com.shopix.api.services.UserService;
 
 @RestController
@@ -24,8 +33,34 @@ import com.shopix.api.services.UserService;
 public class UserController {
 	@Autowired
 	private UserService userService;
+	private final AuthenticationManager authenticationManager;
+	private final JWTService jwtService;
+	private final UserRepository userRepository;
 	
-	@PostMapping
+	
+	public UserController(AuthenticationManager authenticationManager, JWTService jwtService, UserRepository userRepository) {
+		this.authenticationManager = authenticationManager;
+		this.jwtService = jwtService;
+		this.userRepository = userRepository;
+	}
+
+	@PostMapping("/auth")
+	public ResponseEntity<?> auth(@RequestBody AuthDTO dto)
+	{
+		Optional<User> userOpt = userRepository.findByUsername(dto.username());
+		if (userOpt.isEmpty()) {
+			return new ResponseEntity<>("Usuário não encontrado", HttpStatus.NOT_FOUND);
+		}
+		String password = dto.password() + userOpt.get().getPassword_salt();
+		Authentication auth = authenticationManager.authenticate(
+			new UsernamePasswordAuthenticationToken(dto.username(), password)
+		);
+		User user = (User) auth.getPrincipal();
+		String token = jwtService.generateToken(user);
+		return new ResponseEntity<>(Map.of("token", token), HttpStatus.OK);
+	}
+	
+	@PostMapping("/register")
 	public ResponseEntity<UserResponseDTO> store(@RequestBody UserCreatedDTO user)
 	{
 		UserResponseDTO created = userService.store(user);
