@@ -67,6 +67,12 @@ public class UserController {
 		return new ResponseEntity<>(created, HttpStatus.CREATED);
 	}
 	
+	@GetMapping("/me")
+	public ResponseEntity<UserResponseDTO> me(Authentication auth)
+	{
+		return new ResponseEntity<>(userService.me(auth), HttpStatus.OK);
+	}
+	
 	@GetMapping
 	public ResponseEntity<List<UserResponseDTO>> list()
 	{

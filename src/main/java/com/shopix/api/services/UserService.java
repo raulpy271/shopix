@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.Authentication;
 
 import com.shopix.api.dtos.UserCreatedDTO;
 import com.shopix.api.dtos.UserResponseDTO;
@@ -23,6 +24,12 @@ public class UserService {
 	public UserService()
 	{
 		this.random = new SecureRandom();
+	}
+	
+	public UserResponseDTO me(Authentication auth)
+	{
+		User user = (User) auth.getPrincipal();
+		return UserMapper.toDTO(user);
 	}
 
 	public UserResponseDTO store(UserCreatedDTO created)
