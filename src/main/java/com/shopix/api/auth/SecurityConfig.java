@@ -25,7 +25,8 @@ public class SecurityConfig {
 	private final UserDetailsServiceImpl userDetailsServiceImpl;
 	private static final String[] ENDPOINTS = {
 		"/api/users/auth",
-		"/api/users/register"
+		"/api/users/register",
+		"/storage/files/*",
 	};
 	
 	public SecurityConfig(JwtFilter jwtFilter, UserDetailsServiceImpl userDetailsServiceImpl)
