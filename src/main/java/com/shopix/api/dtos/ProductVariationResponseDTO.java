@@ -5,4 +5,5 @@ import java.util.HashMap;
 public record ProductVariationResponseDTO(
 	Long id,
 	HashMap<String, String> options,
-	int stock) { }
+	int stock,
+	Long product_id) { }

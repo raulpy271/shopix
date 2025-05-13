@@ -8,7 +8,11 @@ public class ProductVariationMapper {
 
 	public static ProductVariationResponseDTO toDTO(ProductVariation var)
 	{
-		return new ProductVariationResponseDTO(var.getId(), var.getOptions(), var.getStock());
+		Long product_id = null;
+		if (var.getProduct() != null) {
+			product_id = var.getProduct().getId();
+		}
+		return new ProductVariationResponseDTO(var.getId(), var.getOptions(), var.getStock(), product_id);
 	}
 	
 	public static ProductVariation toEntity(ProductVariationCreateDTO dto)
