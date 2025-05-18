@@ -1,5 +1,6 @@
 package com.shopix.api.controllers;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.shopix.api.dtos.ProductCreateDTO;
 import com.shopix.api.dtos.ProductResponseDTO;
 import com.shopix.api.dtos.ProductUpdateDTO;
 import com.shopix.api.services.ProductService;
+import com.shopix.api.storage.StorageService;
 
 @RestController
 @RequestMapping("/api/products")
@@ -25,6 +27,8 @@ public class ProductController {
 	
 	@Autowired
 	ProductService productService;
+	@Autowired
+	StorageService storageService;
 	
 	@PostMapping
 	public ResponseEntity<ProductResponseDTO> create(@RequestBody ProductCreateDTO dto)
@@ -69,5 +73,17 @@ public class ProductController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
+
+	@GetMapping("{id}/images")
+	public ResponseEntity<List<String>> getProductImages(@PathVariable Long id) {
+		List<Path> paths = storageService.listResourceByProduct(id);
+		if (paths.size() > 0) {
+			List<String> pathstr = paths.stream().map(Path::toString).toList();
+			return new ResponseEntity(pathstr, HttpStatus.OK);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
 
 }
