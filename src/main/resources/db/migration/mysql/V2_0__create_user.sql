@@ -5,7 +5,7 @@ create table users (
 	fullname varchar(255) not null,
 	email varchar(100) not null unique,
 	admin boolean default FALSE,
-	role varchar(100) check (role in ('SELLER', 'BUYER')),
+	role varchar(100) check (role in ('SELLER', 'CUSTOMER')),
 	password_hash varchar(255),
 	password_salt varchar(255),
 	created_at timestamp,
