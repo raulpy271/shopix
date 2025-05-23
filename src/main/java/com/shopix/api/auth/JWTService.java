@@ -13,8 +13,12 @@ import io.jsonwebtoken.Jwts;
 
 @Service
 public class JWTService {
-	private final SecretKey secret = Jwts.SIG.HS256.key().build();
-
+	private final SecretKey secret;
+	
+	JWTService(SecretKey secret) {
+		this.secret = secret;
+	}
+	
 	public String generateToken(User user) {
 		return Jwts
 			.builder()

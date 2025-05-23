@@ -28,6 +28,7 @@ public class SecurityConfig {
 		"/api/users/register",
 		"/storage/files/*",
 		"/storage/product/**",
+		"/storage/user/**",
 	};
 	
 	public SecurityConfig(JwtFilter jwtFilter, UserDetailsServiceImpl userDetailsServiceImpl)
