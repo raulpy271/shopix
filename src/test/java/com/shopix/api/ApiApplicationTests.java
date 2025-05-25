@@ -2,6 +2,7 @@ package com.shopix.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,6 +18,7 @@ import com.shopix.api.repository.UserRepository;
 	classes = ApiApplication.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Tag("integration")
 class ApiApplicationTests {
 
 	@Autowired
