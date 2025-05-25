@@ -1,6 +1,13 @@
 package com.shopix.api.testUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.shopix.api.entities.Cart;
+import com.shopix.api.entities.CartItem;
 import com.shopix.api.entities.Product;
+import com.shopix.api.entities.ProductVariation;
 import com.shopix.api.entities.User;
 import com.shopix.api.enuns.Role;
 
@@ -20,6 +27,7 @@ public class EntityFactory {
 	}
 	
 	public static Product product() {
+		List<ProductVariation> vars = new ArrayList<>();
 		Product p = new Product();
 		p.setName(faker.name().title());
 		p.setBrand(faker.brand().car());
@@ -27,6 +35,39 @@ public class EntityFactory {
 		p.setPrice(faker.number().randomDouble(2, 1, 1000));
 		p.setStock(faker.number().numberBetween(100, 500));
 		p.setRating((float)faker.number().randomDouble(2, 0, 5));
+		for (int i = 0; i < faker.number().numberBetween(0, 3); i++) {
+			vars.add(var());
+		}
+		p.setVars(vars);
 		return p;
+	}
+	
+	public static ProductVariation var() {
+		HashMap<String, String> op = new HashMap<>();
+		for (int i = 0; i < faker.number().numberBetween(1, 5); i++) {
+			op.put(faker.name().firstName(), faker.word().adjective());
+		}
+		ProductVariation pv = new ProductVariation();
+		pv.setStock(faker.number().numberBetween(1, 200));
+		pv.setOptions(op);
+		return pv;
+	}
+	
+	public static Cart cart() {
+		Cart c = new Cart();
+		List<CartItem> items = new ArrayList<>();
+		for (int i = 0; i < faker.number().numberBetween(1, 5); i++) {
+			items.add(cartItem());
+		}
+		c.setItems(items);
+		return c;
+	}
+	
+	public static CartItem cartItem() {
+		CartItem ci = new CartItem();
+		ci.setQuantity(faker.number().randomDigit());
+		ci.setSubtotal((float)faker.number().randomDouble(2, 100, 500));
+		ci.setVar(var());
+		return ci;
 	}
 }
