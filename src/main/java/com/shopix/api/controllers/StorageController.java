@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shopix.api.repository.ProductRepository;
+import com.shopix.api.repository.UserRepository;
 import com.shopix.api.storage.StorageService;
 
 @RestController
@@ -37,6 +38,8 @@ public class StorageController {
 	StorageService storageService;
 	@Autowired
 	ProductRepository productRepository;
+	@Autowired
+	UserRepository userRepository;
 
 	@GetMapping("/files/{filename:.+}")
 	@ResponseBody
@@ -51,11 +54,11 @@ public class StorageController {
 				"attachment; filename=\"" + file.getFilename() + "\"").body(file);
 	}
 
-	@GetMapping({"/product/{product_id}", "/product/{product_id}/{name}"})
+	@GetMapping({"/{resource}/{resource_id}", "/{resource}/{resource_id}/{name}"})
 	@ResponseBody
-	public ResponseEntity<Resource> getProductIdResourse(@PathVariable Long product_id, @PathVariable(required=false) String name) {
+	public ResponseEntity<Resource> getResourceById(@PathVariable String resource, @PathVariable Long resource_id, @PathVariable(required=false) String name) {
 		Path path;
-		List<Path> paths = storageService.listResourceByProduct(product_id);
+		List<Path> paths = storageService.listFilesByResource(resource, resource_id);
 		if (paths.size() > 0) {
 			if (name == null) {
 				path = paths.get(0);
@@ -86,19 +89,32 @@ public class StorageController {
 		return "redirect:/";
 	}
 
-	@PostMapping("/upload/product")
-	public ResponseEntity<String> handleProductUpload(@RequestParam("file") MultipartFile file,
-			@RequestParam("product_id") Long product_id,
+	@PostMapping("/upload/{resource}")
+	public ResponseEntity<String> handleResourceUpload(@RequestParam("file") MultipartFile file,
+			@RequestParam("resource_id") Long resource_id,
+			@PathVariable String resource,
 			RedirectAttributes redirectAttributes) {
-		boolean exists = productRepository.existsById(product_id);
+		boolean exists = false;
+		switch (resource) {
+			case "product":
+				exists = productRepository.existsById(resource_id);
+				break;
+			case "user":
+				exists = userRepository.existsById(resource_id);
+				break;
+			default:
+				return new ResponseEntity("Recurso " + resource + " não suportado!", HttpStatus.BAD_REQUEST);
+		}
+		
 		if (exists) {
-			storageService.createDirIfNotExists(product_id.toString());
-			storageService.store(file, Paths.get(product_id.toString()).resolve(Paths.get(file.getOriginalFilename())));
+			storageService.createDirIfNotExists(resource, Optional.of(resource_id.toString()));
+			Path path = Paths.get(resource).resolve(resource_id.toString()).resolve(file.getOriginalFilename());
+			storageService.store(file, path);
 			redirectAttributes.addFlashAttribute("message",
 					"You successfully uploaded " + file.getOriginalFilename() + "!");
-			return new ResponseEntity("redirect:/", HttpStatus.CREATED);
+			return new ResponseEntity("redirect:/" + path.toString(), HttpStatus.CREATED);
 		} else {
-			return new ResponseEntity("Produto não encontrado!", HttpStatus.NOT_FOUND);
+			return new ResponseEntity("Recurso não encontrado!", HttpStatus.NOT_FOUND);
 		}
 	}
 

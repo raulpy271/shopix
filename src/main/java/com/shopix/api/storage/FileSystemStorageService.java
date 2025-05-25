@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -31,7 +32,8 @@ public class FileSystemStorageService implements StorageService {
 					.normalize().toAbsolutePath();
 			if (
 					!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath()) &&
-					!destinationFile.getParent().getParent().equals(this.rootLocation.toAbsolutePath())
+					!destinationFile.getParent().getParent().equals(this.rootLocation.toAbsolutePath()) &&
+					!destinationFile.getParent().getParent().getParent().equals(this.rootLocation.toAbsolutePath())
 				) {
 				// This is a security check
 				throw new StorageException(
@@ -47,9 +49,9 @@ public class FileSystemStorageService implements StorageService {
 		}
 	}
 	
-	public List<Path> listResourceByProduct(Long product_id) {
+	public List<Path> listFilesByResource(String resource, Long resource_id) {
 		try {
-			Path productPrefix = this.rootLocation.resolve(product_id.toString());
+			Path productPrefix = this.rootLocation.resolve(resource).resolve(resource_id.toString());
 			return Files.walk(productPrefix, 1)
 				.filter(path -> !path.equals(this.rootLocation) && !Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS))
 				.map(this.rootLocation::relativize)
@@ -84,11 +86,14 @@ public class FileSystemStorageService implements StorageService {
 	}
 
 	@Override
-	public boolean createDirIfNotExists(String dir) {
+	public boolean createDirIfNotExists(String dir, Optional<String> subdir) {
 		try {
 			Path dirPath = this.rootLocation.resolve(Paths.get(dir));
+			if (subdir.isPresent()) {
+				dirPath = dirPath.resolve(Paths.get(subdir.get()));
+			}
 			if (!Files.exists(dirPath, LinkOption.NOFOLLOW_LINKS) && !Files.isDirectory(dirPath, LinkOption.NOFOLLOW_LINKS)) {
-				Files.createDirectory(dirPath);
+				Files.createDirectories(dirPath);
 				return true;
 			}
 			return false;
