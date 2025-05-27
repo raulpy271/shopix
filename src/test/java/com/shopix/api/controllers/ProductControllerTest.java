@@ -22,12 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopix.api.ApiApplication;
 import com.shopix.api.dtos.ProductCreateDTO;
 import com.shopix.api.dtos.ProductResponseDTO;
-import com.shopix.api.dtos.ProductUpdateDTO;
 import com.shopix.api.entities.Product;
 import com.shopix.api.entities.User;
+import com.shopix.api.fixtures.EntityFactory;
+import com.shopix.api.fixtures.IntegrationUtils;
 import com.shopix.api.repository.ProductRepository;
-import com.shopix.api.testUtils.EntityFactory;
-import com.shopix.api.testUtils.IntegrationUtils;
 
 import net.datafaker.Faker;
 

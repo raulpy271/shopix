@@ -17,9 +17,9 @@ import com.shopix.api.dtos.UserResponseDTO;
 import com.shopix.api.dtos.UserUpdateDTO;
 import com.shopix.api.entities.User;
 import com.shopix.api.enuns.Role;
+import com.shopix.api.fixtures.EntityFactory;
+import com.shopix.api.fixtures.IntegrationUtils;
 import com.shopix.api.repository.UserRepository;
-import com.shopix.api.testUtils.EntityFactory;
-import com.shopix.api.testUtils.IntegrationUtils;
 
 import net.datafaker.Faker;
 

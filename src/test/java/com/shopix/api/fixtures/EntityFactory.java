@@ -1,5 +1,7 @@
-package com.shopix.api.testUtils;
+package com.shopix.api.fixtures;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +10,7 @@ import com.shopix.api.entities.Cart;
 import com.shopix.api.entities.CartItem;
 import com.shopix.api.entities.Product;
 import com.shopix.api.entities.ProductVariation;
+import com.shopix.api.entities.Promotion;
 import com.shopix.api.entities.User;
 import com.shopix.api.enuns.Role;
 
@@ -35,7 +38,7 @@ public class EntityFactory {
 		p.setPrice(faker.number().randomDouble(2, 1, 1000));
 		p.setStock(faker.number().numberBetween(100, 500));
 		p.setRating((float)faker.number().randomDouble(2, 0, 5));
-		for (int i = 0; i < faker.number().numberBetween(0, 3); i++) {
+		for (int i = 0; i < faker.number().numberBetween(1, 4); i++) {
 			vars.add(var());
 		}
 		p.setVars(vars);
@@ -69,5 +72,30 @@ public class EntityFactory {
 		ci.setSubtotal((float)faker.number().randomDouble(2, 100, 500));
 		ci.setVar(var());
 		return ci;
+	}
+	
+	public static Promotion promotion() {
+		// Cria uma promoção ativa por padrão
+		Promotion p = new Promotion();
+		p.setName(faker.cannabis().brands());
+		p.setDiscountPercentage((float) faker.number().numberBetween(0f, 20f) / 100f);
+		p.setStartDate(Date.valueOf(LocalDate.now().minusWeeks(3)));
+		p.setEndDate(Date.valueOf(LocalDate.now()));
+		p.setActive(true);
+		return p;
+	}
+	
+	public static Promotion promotion(boolean inactive) {
+		Promotion p = promotion();
+		if (inactive) {
+			if (faker.bool().bool()) {
+				// uma promoção inativa devido a sua desativação
+				p.setActive(false);
+			} else {
+				// uma promoção inativa devido a sua data
+				p.setEndDate(Date.valueOf(LocalDate.now().minusWeeks(1)));
+			}
+		}
+		return p;
 	}
 }

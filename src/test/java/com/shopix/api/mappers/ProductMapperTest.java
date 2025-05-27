@@ -13,7 +13,7 @@ import org.hamcrest.object.HasEqualValues;
 import com.shopix.api.dtos.ProductCreateDTO;
 import com.shopix.api.dtos.ProductResponseDTO;
 import com.shopix.api.entities.Product;
-import com.shopix.api.testUtils.EntityFactory;
+import com.shopix.api.fixtures.EntityFactory;
 
 import net.datafaker.Faker;
 

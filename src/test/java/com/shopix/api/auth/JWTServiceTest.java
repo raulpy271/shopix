@@ -16,7 +16,7 @@ import io.jsonwebtoken.security.SignatureException;
 
 import com.shopix.api.entities.User;
 import com.shopix.api.enuns.Role;
-import com.shopix.api.testUtils.EntityFactory;
+import com.shopix.api.fixtures.EntityFactory;
 
 public class JWTServiceTest {
 	private SecretKey secret;

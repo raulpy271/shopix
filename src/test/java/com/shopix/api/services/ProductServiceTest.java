@@ -18,9 +18,9 @@ import com.shopix.api.dtos.ProductCreateDTO;
 import com.shopix.api.dtos.ProductResponseDTO;
 import com.shopix.api.dtos.ProductUpdateDTO;
 import com.shopix.api.entities.Product;
+import com.shopix.api.fixtures.EntityFactory;
+import com.shopix.api.fixtures.IntegrationUtils;
 import com.shopix.api.repository.ProductRepository;
-import com.shopix.api.testUtils.EntityFactory;
-import com.shopix.api.testUtils.IntegrationUtils;
 
 import net.datafaker.Faker;
 
@@ -37,8 +37,6 @@ public class ProductServiceTest {
 	private ProductRepository repository;
 	@Autowired
 	private ProductService service;
-	@Autowired
-	private IntegrationUtils utils;
 	private Product product;
 	private Faker faker;
 	

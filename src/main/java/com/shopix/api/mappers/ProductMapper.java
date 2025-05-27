@@ -11,7 +11,12 @@ import com.shopix.api.entities.ProductVariation;
 public class ProductMapper {
 	public static ProductResponseDTO toDTO(Product product)
 	{
-		List<ProductVariationResponseDTO> vars = product.getVars().stream().map(ProductVariationMapper::toDTO).toList();
+		List<ProductVariationResponseDTO> vars;
+		if (product.getVars() != null) {
+			vars = product.getVars().stream().map(ProductVariationMapper::toDTO).toList();
+		} else {
+			vars = List.of();
+		}
 		return new ProductResponseDTO(product.getId(), product.getName(), product.getPrice(), product.getStock(), product.getCategory(), product.getBrand(), product.getRating(), product.getCreated_at(), product.getUpdated_at(), vars);
 	}
 	

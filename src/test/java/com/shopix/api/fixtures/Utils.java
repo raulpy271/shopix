@@ -1,4 +1,4 @@
-package com.shopix.api.testUtils;
+package com.shopix.api.fixtures;
 
 import java.io.IOException;
 import java.util.ArrayList;
