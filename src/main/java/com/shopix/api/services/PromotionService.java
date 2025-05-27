@@ -1,5 +1,6 @@
 package com.shopix.api.services;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,5 +57,20 @@ public class PromotionService {
 			.findById(id)
 			.orElseThrow(() -> new RuntimeException("Promoção não encontrada"));
 		promotionRepository.delete(promotion);
+	}
+	
+	public static boolean validPromotion(Promotion p)
+	{
+		if (p.isActive()) {
+			LocalDate now = LocalDate.now();
+			LocalDate start = p.getStartDate().toLocalDate();
+			LocalDate end = p.getEndDate().toLocalDate();
+			return (
+				(start.isBefore(now) || start.equals(now)) &&
+				(now.isBefore(end) || now.equals(end))
+			);
+		} else {
+			return false;
+		}
 	}
 }
