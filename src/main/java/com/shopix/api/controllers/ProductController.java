@@ -76,7 +76,7 @@ public class ProductController {
 
 	@GetMapping("{id}/images")
 	public ResponseEntity<List<String>> getProductImages(@PathVariable Long id) {
-		List<Path> paths = storageService.listResourceByProduct(id);
+		List<Path> paths = storageService.listFilesByResource("product", id);
 		if (paths.size() > 0) {
 			List<String> pathstr = paths.stream().map(Path::toString).toList();
 			return new ResponseEntity(pathstr, HttpStatus.OK);
