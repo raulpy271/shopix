@@ -36,7 +36,7 @@ public class UserService {
 	{
 		User user = UserMapper.toEntity(created);
 		String salt = "";
-		for (int i = 0; i < 64; i++) {
+		for (int i = 0; i < 32; i++) {
 			salt += String.valueOf(random.nextInt(8));
 		}
 		user.setPassword_hash(new BCryptPasswordEncoder().encode(created.password() + salt));
