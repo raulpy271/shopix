@@ -7,4 +7,5 @@ public record ReviewResponseDTO(
 	int rating,
 	String comment,
 	Instant created_at,
-	Instant updated_at) { }
+	Instant updated_at,
+	UserResponseDTO user) { }

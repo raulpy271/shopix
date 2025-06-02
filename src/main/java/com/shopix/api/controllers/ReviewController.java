@@ -48,6 +48,16 @@ public class ReviewController {
 		}
 	}
 	
+	@GetMapping("/product/{id}")
+	public ResponseEntity<List<ReviewResponseDTO>> productReviews(@PathVariable Long id)
+	{
+		try {
+			return new ResponseEntity<>(reviewService.productReviews(id), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
+	
 	@PatchMapping
 	public ResponseEntity<ReviewResponseDTO> update(@RequestBody ReviewUpdateDTO dto)
 	{
