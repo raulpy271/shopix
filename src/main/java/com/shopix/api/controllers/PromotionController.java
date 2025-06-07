@@ -68,4 +68,14 @@ public class PromotionController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
+
+	@GetMapping("/product/{id}")
+	public ResponseEntity<PromotionResponseDTO> productPromotions(@PathVariable Long id)
+	{
+		try {
+			return new ResponseEntity<>(promotionService.productPromotions(id), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
 }

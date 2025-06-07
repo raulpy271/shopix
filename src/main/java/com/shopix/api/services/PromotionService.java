@@ -1,6 +1,7 @@
 package com.shopix.api.services;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,23 +12,30 @@ import com.shopix.api.dtos.PromotionResponseDTO;
 import com.shopix.api.dtos.PromotionUpdateDTO;
 import com.shopix.api.entities.Promotion;
 import com.shopix.api.mappers.PromotionMapper;
+import com.shopix.api.repository.ProductRepository;
 import com.shopix.api.repository.PromotionRepository;
 
 @Service
 public class PromotionService {
 	@Autowired
 	PromotionRepository promotionRepository;
+	@Autowired
+	ProductRepository productRepository;
 	
 	public PromotionResponseDTO store(PromotionCreateDTO dto)
 	{
-		Promotion promotion = PromotionMapper.toEntity(dto);
+		Promotion promotion = PromotionMapper.toEntity(dto, productRepository);
 		return PromotionMapper.toDTO(promotionRepository.save(promotion));
 	}
 	
 	public List<PromotionResponseDTO> list()
 	{
 		List<Promotion> promotions = promotionRepository.findAll();
-		return promotions.stream().map(PromotionMapper::toDTO).toList();
+		return promotions
+			.stream()
+			.filter(PromotionService::validPromotion)
+			.map(PromotionMapper::toDTO)
+			.toList();
 	}
 	
 	public PromotionResponseDTO show(Long id)
@@ -57,6 +65,16 @@ public class PromotionService {
 			.findById(id)
 			.orElseThrow(() -> new RuntimeException("Promoção não encontrada"));
 		promotionRepository.delete(promotion);
+	}
+	
+	public PromotionResponseDTO productPromotions(Long id)
+	{
+		List<Promotion> ps = promotionRepository.getPromotionsByProductId(id);
+		Promotion promotion = ps.stream()
+			.filter(PromotionService::validPromotion)
+			.max(Comparator.comparingDouble(p -> p.getDiscountPercentage()))
+			.orElseThrow(() -> new RuntimeException("Promoção não encontrada"));
+		return PromotionMapper.toDTO(promotion);
 	}
 	
 	public static boolean validPromotion(Promotion p)
