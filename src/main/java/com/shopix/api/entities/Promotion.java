@@ -26,6 +26,6 @@ public class Promotion {
 	private Date endDate;
 	private boolean isActive;
 	@ManyToOne
-	@JoinColumn(name = "product_variation_id")
-	private ProductVariation var;
+	@JoinColumn(name = "product_id")
+	private Product product;
 }

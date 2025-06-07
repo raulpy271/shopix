@@ -8,4 +8,5 @@ public record PromotionResponseDTO(
 	float discountPercentage,
 	Date startDate,
 	Date endDate,
-	boolean isActive) { }
+	boolean isActive,
+	Long product_id) { }

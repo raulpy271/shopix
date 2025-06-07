@@ -6,6 +6,6 @@ create table promotions (
 	is_active bit not null,
 	name varchar(255),
 	start_date date,
-	product_variation_id bigint,
-	foreign key (product_variation_id ) references product_variations(id)
+	product_id bigint,
+	foreign key (product_id) references products (id)
 )

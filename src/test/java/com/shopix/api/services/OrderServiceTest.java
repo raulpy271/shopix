@@ -100,7 +100,7 @@ public class OrderServiceTest {
 
 	@Test
 	void shouldBuyProductWithPromotion() throws Exception {
-		this.promotion.setVar(cart.getItems().get(0).getVar());
+		this.promotion.setProduct(cart.getItems().get(0).getVar().getProduct());
 		Promotion p = promotionRepository.save(this.promotion);
 		BuyItemDTO item = new BuyItemDTO(Optional.of(p.getId()), cart.getItems().get(0).getId());
 		OrderBuyDTO dto = new OrderBuyDTO("rua da lavoura", "PIX", List.of(item));
@@ -122,7 +122,7 @@ public class OrderServiceTest {
 	@Test
 	void shouldValidateInactivePromotion() {
 		Promotion inactive = EntityFactory.promotion(true);
-		inactive.setVar(cart.getItems().get(0).getVar());
+		inactive.setProduct(cart.getItems().get(0).getVar().getProduct());
 		inactive = promotionRepository.save(inactive);
 		BuyItemDTO item = new BuyItemDTO(Optional.of(inactive.getId()), cart.getItems().get(0).getId());
 		OrderBuyDTO dto = new OrderBuyDTO("rua da lavoura", "PIX", List.of(item));
