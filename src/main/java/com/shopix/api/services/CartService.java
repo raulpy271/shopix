@@ -11,6 +11,7 @@ import com.shopix.api.dtos.CartResponseDTO;
 import com.shopix.api.dtos.CartUpdateDTO;
 import com.shopix.api.entities.Cart;
 import com.shopix.api.entities.CartItem;
+import com.shopix.api.entities.User;
 import com.shopix.api.mappers.CartItemMapper;
 import com.shopix.api.mappers.CartMapper;
 import com.shopix.api.repository.CartRepository;
@@ -81,5 +82,11 @@ public class CartService {
 		CartItem item = cartRepository.getCartItemById(item_id);
 		cart.getItems().remove(item);
 		return CartMapper.toDTO(cartRepository.save(cart));
+	}
+	
+	public CartResponseDTO getUserCart(User user)
+	{
+		Cart cart = cartRepository.getCartByUserId(user.getId());
+		return CartMapper.toDTO(cart);
 	}
 }
