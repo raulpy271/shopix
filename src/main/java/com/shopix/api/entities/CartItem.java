@@ -31,4 +31,8 @@ public class CartItem {
 	@JoinColumn(name="product_variation_id")
 	private ProductVariation var;
 
+	@ManyToOne
+	@JoinColumn(name="promotion_id")
+	private Promotion promotion;
+
 }

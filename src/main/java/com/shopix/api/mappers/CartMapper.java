@@ -12,7 +12,12 @@ public class CartMapper {
 
 	public static CartResponseDTO toDTO(Cart cart)
 	{
-		List<CartItemResponseDTO> items = cart.getItems().stream().map(CartItemMapper::toDTO).toList();
+		List<CartItemResponseDTO> items;
+		if (cart.getItems() != null && cart.getItems().size() > 0) {
+			items = cart.getItems().stream().map(CartItemMapper::toDTO).toList();
+		} else {
+			items = List.of();
+		}
 		return new CartResponseDTO(cart.getId(), cart.getUser().getId(), items);
 	}
 	

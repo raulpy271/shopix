@@ -4,4 +4,5 @@ public record CartItemResponseDTO(
 	Long id,
 	int quantity,
 	float subtotal,
-	Long product_variation_id) { }
+	Long promotion_id,
+	ProductVariationResponseDTO var) { }
