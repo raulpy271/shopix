@@ -16,6 +16,7 @@ import com.shopix.api.mappers.CartItemMapper;
 import com.shopix.api.mappers.CartMapper;
 import com.shopix.api.repository.CartRepository;
 import com.shopix.api.repository.ProductRepository;
+import com.shopix.api.repository.PromotionRepository;
 import com.shopix.api.repository.UserRepository;
 
 @Service
@@ -26,6 +27,8 @@ public class CartService {
 	UserRepository userRepository;
 	@Autowired
 	ProductRepository productRepository;
+	@Autowired
+	PromotionRepository promotionRepository;
 	
 	public CartResponseDTO store(CartCreateDTO dto)
 	{
@@ -69,8 +72,19 @@ public class CartService {
 		Cart cart = cartRepository
 			.findById(id)
 			.orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
-		CartItem item = CartItemMapper.toEntity(dto, productRepository);
-		cart.getItems().add(item);
+		CartItem itemCreated = CartItemMapper.toEntity(dto, productRepository, promotionRepository);
+		boolean exists = false;
+		for (CartItem item: cart.getItems()) {
+			if (item.getVar().getId() == itemCreated.getVar().getId()) {
+				exists = true;
+				item.setQuantity(item.getQuantity() + itemCreated.getQuantity());
+				item.setSubtotal(item.getSubtotal() + itemCreated.getSubtotal());
+				break;
+			}
+		}
+		if (!exists) {
+			cart.getItems().add(itemCreated);
+		}
 		return CartMapper.toDTO(cartRepository.save(cart));
 	}
 	

@@ -83,12 +83,14 @@ public class CartController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
-
-	@PostMapping("/removeItem/{cart_id}/{item_id}")
-	public ResponseEntity<CartResponseDTO> addItem(@PathVariable Long cart_id, @PathVariable Long item_id)
+	
+	@DeleteMapping("/removeItem/{item_id}")
+	public ResponseEntity<CartResponseDTO> removeItem(Authentication auth, @PathVariable Long item_id)
 	{
 		try {
-			return new ResponseEntity<>(cartService.removeItem(cart_id, item_id), HttpStatus.OK);
+			User user = (User) auth.getPrincipal();
+			CartResponseDTO cart = cartService.getUserCart(user);
+			return new ResponseEntity<>(cartService.removeItem(cart.id(), item_id), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
