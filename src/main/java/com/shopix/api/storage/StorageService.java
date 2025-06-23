@@ -18,5 +18,7 @@ public interface StorageService {
 	Resource loadAsResource(String filename);
 
 	List<Path> listFilesByResource(String resource, Long resource_id);
+	
+	void emptyResourceId(String resource, Long resource_id);
 
 }

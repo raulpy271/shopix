@@ -92,6 +92,7 @@ public class StorageController {
 	@PostMapping("/upload/{resource}")
 	public ResponseEntity<String> handleResourceUpload(@RequestParam("file") MultipartFile file,
 			@RequestParam("resource_id") Long resource_id,
+			@RequestParam("override") Optional<Boolean> override,
 			@PathVariable String resource,
 			RedirectAttributes redirectAttributes) {
 		boolean exists = false;
@@ -109,6 +110,9 @@ public class StorageController {
 		if (exists) {
 			storageService.createDirIfNotExists(resource, Optional.of(resource_id.toString()));
 			Path path = Paths.get(resource).resolve(resource_id.toString()).resolve(file.getOriginalFilename());
+			if (override.isPresent() && override.get()) {
+				storageService.emptyResourceId(resource, resource_id);
+			}
 			storageService.store(file, path);
 			redirectAttributes.addFlashAttribute("message",
 					"You successfully uploaded " + file.getOriginalFilename() + "!");

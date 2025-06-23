@@ -51,8 +51,8 @@ public class FileSystemStorageService implements StorageService {
 	
 	public List<Path> listFilesByResource(String resource, Long resource_id) {
 		try {
-			Path productPrefix = this.rootLocation.resolve(resource).resolve(resource_id.toString());
-			return Files.walk(productPrefix, 1)
+			Path resourcePrefix = this.rootLocation.resolve(resource).resolve(resource_id.toString());
+			return Files.walk(resourcePrefix, 1)
 				.filter(path -> !path.equals(this.rootLocation) && !Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS))
 				.map(this.rootLocation::relativize)
 				.toList();
@@ -100,5 +100,23 @@ public class FileSystemStorageService implements StorageService {
 		} catch (IOException e) {
 			throw new StorageException("Could not create directory: " + dir, e);
 		}
+	}
+	
+	@Override
+	public void emptyResourceId(String resource, Long resource_id)
+	{
+		try {
+			Path resourcePrefix = this.rootLocation.resolve(resource).resolve(resource_id.toString());
+			Files.walk(resourcePrefix).forEach(file -> {
+				try {
+					Files.deleteIfExists(file);
+				} catch (IOException e) {
+					
+				}
+			});
+		} catch (IOException e) {
+			throw new StorageException("Could not remove directory: " + resource + "/" + resource_id, e);
+		}
+		
 	}
 }
