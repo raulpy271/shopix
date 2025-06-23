@@ -1,7 +1,11 @@
 package com.shopix.api.entities;
 
-import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -28,8 +32,10 @@ public class Product {
 	private String category;
 	private String brand;
 	private float rating;
-	private Date created_at;
-	private Date updated_at;
+	@CreatedDate
+	private Instant created_at;
+	@LastModifiedBy
+	private Instant updated_at;
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="product_id")
 	List<ProductVariation> vars;

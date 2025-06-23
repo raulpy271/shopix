@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,11 +14,13 @@ import com.shopix.api.dtos.OrderBuyDTO;
 import com.shopix.api.dtos.OrderCreateDTO;
 import com.shopix.api.dtos.OrderResponseDTO;
 import com.shopix.api.dtos.OrderUpdateDTO;
+import com.shopix.api.entities.Cart;
 import com.shopix.api.entities.CartItem;
 import com.shopix.api.entities.Order;
 import com.shopix.api.entities.OrderItem;
 import com.shopix.api.entities.ProductVariation;
 import com.shopix.api.entities.Promotion;
+import com.shopix.api.entities.User;
 import com.shopix.api.enuns.OrderStatus;
 import com.shopix.api.mappers.OrderMapper;
 import com.shopix.api.repository.CartRepository;
@@ -45,6 +48,13 @@ public class OrderService {
 	public List<OrderResponseDTO> list()
 	{
 		List<Order> orders = orderRepository.findAll();
+		return orders.stream().map(OrderMapper::toDTO).toList();
+	}
+
+	public List<OrderResponseDTO> listMyOrders(Authentication auth)
+	{
+		User user = (User) auth.getPrincipal();
+		List<Order> orders = orderRepository.getOrdersByUserId(user.getId());
 		return orders.stream().map(OrderMapper::toDTO).toList();
 	}
 	
@@ -77,9 +87,12 @@ public class OrderService {
 	}
 	
 	@Transactional
-	public OrderResponseDTO buy(OrderBuyDTO dto) throws Exception
+	public OrderResponseDTO buy(Authentication auth, OrderBuyDTO dto) throws Exception
 	{
+		User user = (User) auth.getPrincipal();
+		List<CartItem> toRemove = new ArrayList<>();
 		Order order = new Order();
+		order.setUser(user);
 		List<OrderItem> items = new ArrayList<>();
 		float total = 0;
 		for (BuyItemDTO item: dto.items()) {
@@ -107,6 +120,7 @@ public class OrderService {
 				ProductVariation var = ci.getVar();
 				var.setStock(var.getStock() - ci.getQuantity());
 				productRepository.save(var.getProduct());
+				toRemove.add(ci);
 			} else {
 				throw new Exception("Item do carrinho não encontrado");
 			}
@@ -115,6 +129,11 @@ public class OrderService {
 		order.setItems(items);
 		order.setTotalPrice(total);
 		order.setStatus(OrderStatus.PENDING_PAYMENT);
+		for (CartItem item: toRemove) {
+			Cart cart = item.getCart();
+			cart.getItems().remove(item);
+			cartRepository.save(cart);
+		}
 		return OrderMapper.toDTO(orderRepository.save(order));
 	}
 }

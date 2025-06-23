@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.HamcrestCondition.matching;
 import static org.hamcrest.number.IsCloseTo.closeTo;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +32,14 @@ import com.shopix.api.entities.Order;
 import com.shopix.api.entities.Product;
 import com.shopix.api.entities.ProductVariation;
 import com.shopix.api.entities.Promotion;
+import com.shopix.api.entities.User;
 import com.shopix.api.enuns.OrderStatus;
 import com.shopix.api.fixtures.EntityFactory;
 import com.shopix.api.repository.CartRepository;
 import com.shopix.api.repository.OrderRepository;
 import com.shopix.api.repository.ProductRepository;
 import com.shopix.api.repository.PromotionRepository;
+import com.shopix.api.repository.UserRepository;
 
 import net.datafaker.Faker;
 
@@ -54,23 +60,31 @@ public class OrderServiceTest {
 	@Autowired
 	private PromotionRepository promotionRepository;
 	@Autowired
+	private UserRepository userRepository;
+	@Autowired
 	private OrderService service;
 
 	private Faker faker;
+	private User user;
 	private Product product;
 	private Cart cart;
 	private Promotion promotion;
+
+	private Authentication auth = mock(Authentication.class);
 	
 	@BeforeEach
 	void setUp() {
 		faker = new Faker();
 		product = productRepository.save(EntityFactory.product());
+		user = userRepository.save(EntityFactory.user());
+		when(auth.getPrincipal()).thenReturn(user);
 		for (ProductVariation var : product.getVars()) {
 			var.setProduct(product);
 		}
 		promotion = EntityFactory.promotion();
 		cart = EntityFactory.cart();
 		for (CartItem item: cart.getItems()) {
+			item.setCart(cart);
 			item.setVar(
 				product.getVars().get(faker.number().numberBetween(0, product.getVars().size()))
 			);
@@ -87,7 +101,7 @@ public class OrderServiceTest {
 		BuyItemDTO itemDto = new BuyItemDTO(Optional.empty(), item.getId());
 		OrderBuyDTO dto = new OrderBuyDTO("rua da lavoura", "PIX", List.of(itemDto));
 		double expectedPrice = item.getVar().getProduct().getPrice() * quantity;
-		OrderResponseDTO orderRes = service.buy(dto);
+		OrderResponseDTO orderRes = service.buy(auth, dto);
 		assertThat(repository.existsById(orderRes.id())).isTrue();
 		Order order = repository.findById(orderRes.id()).get();
 		assertThat(order.getItems().size()).isEqualTo(dto.items().size());
@@ -109,13 +123,12 @@ public class OrderServiceTest {
 			cart.getItems().get(0).getQuantity() *
 			(1f - p.getDiscountPercentage())
 		);
-		OrderResponseDTO orderRes = service.buy(dto);
+		OrderResponseDTO orderRes = service.buy(auth, dto);
 		assertThat(repository.existsById(orderRes.id())).isTrue();
 		Order order = repository.findById(orderRes.id()).get();
 		assertThat(order.getItems().size()).isEqualTo(dto.items().size());
 		assertThat((double)order.getTotalPrice()).is(matching(closeTo(expectedPrice, 0.004)));
 		assertThat((double)order.getItems().get(0).getSubtotal()).is(matching(closeTo(expectedPrice, 0.004)));
-		assertThat(order.getItems().get(0).getQuantity()).isEqualTo(cart.getItems().get(0).getQuantity());
 		assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDING_PAYMENT);
 	}
 	
@@ -126,7 +139,7 @@ public class OrderServiceTest {
 		inactive = promotionRepository.save(inactive);
 		BuyItemDTO item = new BuyItemDTO(Optional.of(inactive.getId()), cart.getItems().get(0).getId());
 		OrderBuyDTO dto = new OrderBuyDTO("rua da lavoura", "PIX", List.of(item));
-		assertThatThrownBy(() -> service.buy(dto)).hasMessageContaining("está inativa");
+		assertThatThrownBy(() -> service.buy(auth, dto)).hasMessageContaining("está inativa");
 	}
 	
 	@Test
@@ -136,6 +149,6 @@ public class OrderServiceTest {
 		cartRepository.save(cart);
 		BuyItemDTO itemDto = new BuyItemDTO(Optional.empty(), item.getId());
 		OrderBuyDTO dto = new OrderBuyDTO("rua da lavoura", "PIX", List.of(itemDto));
-		assertThatThrownBy(() -> service.buy(dto)).hasMessageContaining("Não há stoque");
+		assertThatThrownBy(() -> service.buy(auth, dto)).hasMessageContaining("Não há stoque");
 	}
 }

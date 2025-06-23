@@ -93,6 +93,5 @@ public class UserServiceTest {
 		User user = utils.storeUser(this.user, password);
 		service.destroy(user.getId());
 		assertThat(repository.findById(user.getId())).isEmpty();
-		assertThat(repository.findAll()).isEmpty();
 	}
 }

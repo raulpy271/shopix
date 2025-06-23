@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shopix.api.dtos.OrderBuyDTO;
 import com.shopix.api.dtos.OrderCreateDTO;
 import com.shopix.api.dtos.OrderResponseDTO;
 import com.shopix.api.dtos.OrderUpdateDTO;
@@ -36,6 +38,23 @@ public class OrderController {
 	public ResponseEntity<List<OrderResponseDTO>> list()
 	{
 		return new ResponseEntity<>(orderService.list(), HttpStatus.OK);
+	}
+
+	@GetMapping("/my")
+	public ResponseEntity<List<OrderResponseDTO>> listMyOrders(Authentication auth)
+	{
+		return new ResponseEntity<>(orderService.listMyOrders(auth), HttpStatus.OK);
+	}
+
+	@PostMapping("/buy")
+	public ResponseEntity<OrderResponseDTO> buy(Authentication auth, @RequestBody OrderBuyDTO dto)
+	{
+		try {
+			return new ResponseEntity<>(orderService.buy(auth, dto), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			
+		}
 	}
 	
 	@GetMapping("/{id}")

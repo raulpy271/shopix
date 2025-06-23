@@ -1,6 +1,6 @@
 package com.shopix.api.entities;
 
-import java.sql.Date;
+import java.time.Instant;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,8 +22,8 @@ public class Review {
 	private Long id;
 	private int rating;
 	private String comment;
-	private Date created_at;
-	private Date updated_at;
+	private Instant created_at;
+	private Instant updated_at;
 
 	@ManyToOne
 	@JoinColumn(name="user_id")

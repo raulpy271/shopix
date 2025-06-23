@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name="carts")
+@Entity
 @Table(name="carts")
 @Getter
 @Setter
@@ -22,8 +22,9 @@ public class Cart {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	@OneToOne
-	@JoinColumn(name="user_id")
+
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 	
 	@OneToMany(cascade=CascadeType.ALL)
