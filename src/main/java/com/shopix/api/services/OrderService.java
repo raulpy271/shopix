@@ -14,6 +14,7 @@ import com.shopix.api.dtos.OrderBuyDTO;
 import com.shopix.api.dtos.OrderCreateDTO;
 import com.shopix.api.dtos.OrderResponseDTO;
 import com.shopix.api.dtos.OrderUpdateDTO;
+import com.shopix.api.entities.Address;
 import com.shopix.api.entities.Cart;
 import com.shopix.api.entities.CartItem;
 import com.shopix.api.entities.Order;
@@ -23,6 +24,7 @@ import com.shopix.api.entities.Promotion;
 import com.shopix.api.entities.User;
 import com.shopix.api.enuns.OrderStatus;
 import com.shopix.api.mappers.OrderMapper;
+import com.shopix.api.repository.AddressRepository;
 import com.shopix.api.repository.CartRepository;
 import com.shopix.api.repository.OrderRepository;
 import com.shopix.api.repository.ProductRepository;
@@ -38,6 +40,8 @@ public class OrderService {
 	CartRepository cartRepository;
 	@Autowired
 	PromotionRepository promotionRepository;
+	@Autowired
+	AddressRepository addressRepository;
 	
 	public OrderResponseDTO store(OrderCreateDTO create)
 	{
@@ -90,9 +94,11 @@ public class OrderService {
 	public OrderResponseDTO buy(Authentication auth, OrderBuyDTO dto) throws Exception
 	{
 		User user = (User) auth.getPrincipal();
+		Address address = addressRepository.findById(dto.address_id()).get();
 		List<CartItem> toRemove = new ArrayList<>();
 		Order order = new Order();
 		order.setUser(user);
+		order.setAddress(address);
 		List<OrderItem> items = new ArrayList<>();
 		float total = 0;
 		for (BuyItemDTO item: dto.items()) {

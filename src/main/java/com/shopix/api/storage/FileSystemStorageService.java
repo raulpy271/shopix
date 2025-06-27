@@ -109,9 +109,11 @@ public class FileSystemStorageService implements StorageService {
 			Path resourcePrefix = this.rootLocation.resolve(resource).resolve(resource_id.toString());
 			Files.walk(resourcePrefix).forEach(file -> {
 				try {
-					Files.deleteIfExists(file);
+					if (!Files.isDirectory(file, LinkOption.NOFOLLOW_LINKS)) {
+						Files.deleteIfExists(file);
+					}
 				} catch (IOException e) {
-					
+					System.out.println("Erro ao limpar recurso: " + e.getMessage());
 				}
 			});
 		} catch (IOException e) {

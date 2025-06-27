@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,9 +27,9 @@ public class ReviewController {
 	ReviewService reviewService;
 	
 	@PostMapping
-	public ResponseEntity<ReviewResponseDTO> store(@RequestBody ReviewCreateDTO dto)
+	public ResponseEntity<ReviewResponseDTO> store(Authentication auth, @RequestBody ReviewCreateDTO dto)
 	{
-		ReviewResponseDTO created = reviewService.store(dto);
+		ReviewResponseDTO created = reviewService.store(auth, dto);
 		return new ResponseEntity<>(created, HttpStatus.CREATED);
 	}
 	
