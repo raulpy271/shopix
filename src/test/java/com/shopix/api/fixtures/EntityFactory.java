@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.shopix.api.entities.Address;
 import com.shopix.api.entities.Cart;
 import com.shopix.api.entities.CartItem;
 import com.shopix.api.entities.Product;
@@ -97,5 +98,17 @@ public class EntityFactory {
 			}
 		}
 		return p;
+	}
+	
+	public static Address address() {
+		Address a = new Address();
+		a.setCity(faker.address().city());
+		a.setStreet(faker.address().streetAddress());
+		a.setNumber(faker.address().buildingNumber());
+		a.setNeighborhood(faker.address().streetPrefix());
+		a.setState(faker.address().state());
+		a.setComplement(faker.address().secondaryAddress());
+		a.setZipCode(faker.number().numberBetween(1000l, 10000l));
+		return a;
 	}
 }

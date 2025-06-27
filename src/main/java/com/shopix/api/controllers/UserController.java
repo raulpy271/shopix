@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shopix.api.auth.JWTService;
+import com.shopix.api.dtos.AddressCreateDTO;
+import com.shopix.api.dtos.AddressResponseDTO;
 import com.shopix.api.dtos.AuthDTO;
 import com.shopix.api.dtos.UserCreatedDTO;
 import com.shopix.api.dtos.UserResponseDTO;
@@ -87,8 +89,6 @@ public class UserController {
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
-
-		
 	}
 	
 	@PatchMapping
@@ -110,5 +110,17 @@ public class UserController {
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
+	}
+	
+	@GetMapping("/addresses")
+	public ResponseEntity<List<AddressResponseDTO>> addresses(Authentication auth)
+	{
+		return new ResponseEntity<>(userService.addresses(auth), HttpStatus.OK);
+	}
+	
+	@PostMapping("/addresses")
+	public ResponseEntity<AddressResponseDTO> createAddresses(@RequestBody AddressCreateDTO dto, Authentication auth)
+	{
+		return new ResponseEntity<>(userService.createAddresses(dto, auth), HttpStatus.OK);
 	}
 }

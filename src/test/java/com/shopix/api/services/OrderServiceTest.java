@@ -26,6 +26,7 @@ import com.shopix.api.ApiApplication;
 import com.shopix.api.dtos.BuyItemDTO;
 import com.shopix.api.dtos.OrderBuyDTO;
 import com.shopix.api.dtos.OrderResponseDTO;
+import com.shopix.api.entities.Address;
 import com.shopix.api.entities.Cart;
 import com.shopix.api.entities.CartItem;
 import com.shopix.api.entities.Order;
@@ -35,6 +36,7 @@ import com.shopix.api.entities.Promotion;
 import com.shopix.api.entities.User;
 import com.shopix.api.enuns.OrderStatus;
 import com.shopix.api.fixtures.EntityFactory;
+import com.shopix.api.repository.AddressRepository;
 import com.shopix.api.repository.CartRepository;
 import com.shopix.api.repository.OrderRepository;
 import com.shopix.api.repository.ProductRepository;
@@ -62,10 +64,13 @@ public class OrderServiceTest {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
+	private AddressRepository addressRepository;
+	@Autowired
 	private OrderService service;
 
 	private Faker faker;
 	private User user;
+	private Address address;
 	private Product product;
 	private Cart cart;
 	private Promotion promotion;
@@ -78,6 +83,7 @@ public class OrderServiceTest {
 		product = productRepository.save(EntityFactory.product());
 		user = userRepository.save(EntityFactory.user());
 		when(auth.getPrincipal()).thenReturn(user);
+		address = addressRepository.save(EntityFactory.address());
 		for (ProductVariation var : product.getVars()) {
 			var.setProduct(product);
 		}
@@ -99,7 +105,7 @@ public class OrderServiceTest {
 		int varStock = item.getVar().getStock();
 		int quantity = item.getQuantity();
 		BuyItemDTO itemDto = new BuyItemDTO(Optional.empty(), item.getId());
-		OrderBuyDTO dto = new OrderBuyDTO("rua da lavoura", "PIX", List.of(itemDto));
+		OrderBuyDTO dto = new OrderBuyDTO("PIX", address.getId(), List.of(itemDto));
 		double expectedPrice = item.getVar().getProduct().getPrice() * quantity;
 		OrderResponseDTO orderRes = service.buy(auth, dto);
 		assertThat(repository.existsById(orderRes.id())).isTrue();
@@ -117,7 +123,7 @@ public class OrderServiceTest {
 		this.promotion.setProduct(cart.getItems().get(0).getVar().getProduct());
 		Promotion p = promotionRepository.save(this.promotion);
 		BuyItemDTO item = new BuyItemDTO(Optional.of(p.getId()), cart.getItems().get(0).getId());
-		OrderBuyDTO dto = new OrderBuyDTO("rua da lavoura", "PIX", List.of(item));
+		OrderBuyDTO dto = new OrderBuyDTO("PIX", address.getId(), List.of(item));
 		double expectedPrice = (
 			cart.getItems().get(0).getVar().getProduct().getPrice() *
 			cart.getItems().get(0).getQuantity() *
@@ -138,7 +144,7 @@ public class OrderServiceTest {
 		inactive.setProduct(cart.getItems().get(0).getVar().getProduct());
 		inactive = promotionRepository.save(inactive);
 		BuyItemDTO item = new BuyItemDTO(Optional.of(inactive.getId()), cart.getItems().get(0).getId());
-		OrderBuyDTO dto = new OrderBuyDTO("rua da lavoura", "PIX", List.of(item));
+		OrderBuyDTO dto = new OrderBuyDTO("PIX", address.getId(), List.of(item));
 		assertThatThrownBy(() -> service.buy(auth, dto)).hasMessageContaining("está inativa");
 	}
 	
@@ -148,7 +154,7 @@ public class OrderServiceTest {
 		item.setQuantity(item.getVar().getStock() + 1);
 		cartRepository.save(cart);
 		BuyItemDTO itemDto = new BuyItemDTO(Optional.empty(), item.getId());
-		OrderBuyDTO dto = new OrderBuyDTO("rua da lavoura", "PIX", List.of(itemDto));
+		OrderBuyDTO dto = new OrderBuyDTO("PIX", address.getId(), List.of(itemDto));
 		assertThatThrownBy(() -> service.buy(auth, dto)).hasMessageContaining("Não há stoque");
 	}
 }

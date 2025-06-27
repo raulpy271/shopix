@@ -8,17 +8,28 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.Authentication;
 
+import com.shopix.api.dtos.AddressCreateDTO;
+import com.shopix.api.dtos.AddressResponseDTO;
 import com.shopix.api.dtos.UserCreatedDTO;
 import com.shopix.api.dtos.UserResponseDTO;
 import com.shopix.api.dtos.UserUpdateDTO;
+import com.shopix.api.entities.Address;
+import com.shopix.api.entities.Cart;
 import com.shopix.api.entities.User;
+import com.shopix.api.mappers.AddressMapper;
 import com.shopix.api.mappers.UserMapper;
+import com.shopix.api.repository.AddressRepository;
+import com.shopix.api.repository.CartRepository;
 import com.shopix.api.repository.UserRepository;
 
 @Component
 public class UserService {
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private AddressRepository addressRepository;
+	@Autowired
+	private CartRepository cartRepository;
 	private SecureRandom random;
 	
 	public UserService()
@@ -41,7 +52,11 @@ public class UserService {
 		}
 		user.setPassword_hash(new BCryptPasswordEncoder().encode(created.password() + salt));
 		user.setPassword_salt(salt);
-		return UserMapper.toDTO(userRepository.save(user));
+		user = userRepository.save(user);
+		Cart cart = new Cart();
+		cart.setUser(user);
+		cartRepository.save(cart);
+		return UserMapper.toDTO(user);
 	}
 	
 	public List<UserResponseDTO> list()
@@ -76,5 +91,20 @@ public class UserService {
 			.findById(id)
 			.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 		userRepository.delete(user);
+	}
+	
+	public List<AddressResponseDTO> addresses(Authentication auth)
+	{
+		User user = (User) auth.getPrincipal();
+		List<Address> addrs = addressRepository.getAddressByUserId(user.getId());
+		return addrs.stream().map(AddressMapper::toDTO).toList();
+	}
+
+	public AddressResponseDTO createAddresses(AddressCreateDTO dto, Authentication auth)
+	{
+		User user = (User) auth.getPrincipal();
+		Address address = AddressMapper.toEntity(dto);
+		address.setUser(user);
+		return AddressMapper.toDTO(addressRepository.save(address));
 	}
 }
